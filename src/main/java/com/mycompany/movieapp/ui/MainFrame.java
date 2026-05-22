@@ -15,8 +15,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.HttpURLConnection;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class MainFrame extends JFrame {
 
@@ -84,7 +90,8 @@ public class MainFrame extends JFrame {
         btnUpcomingMovies = new JButton("Upcoming Movies");
 
         btnViewDetails = new JButton("View Details");
-
+        
+        tableModel = new DefaultTableModel();
         tblMovies = new JTable(tableModel);
 
         tblMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -93,6 +100,11 @@ public class MainFrame extends JFrame {
     }
 
     private void configureTable() {
+        tableModel.addColumn("ID");
+        tableModel.addColumn("Title");
+        tableModel.addColumn("Rating");
+        tableModel.addColumn("Release Date");
+        tableModel.addColumn("Language");
     }
 
     private void addComponents() {
@@ -176,9 +188,57 @@ public class MainFrame extends JFrame {
      * Call movie service and load top rated movies from API
      */
     private void loadTopRatedMovies() {
-
-        JOptionPane.showMessageDialog(this,
-                "TODO: Load Top Rated Movies");
+        
+        String endpoint = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1";
+        
+        try {
+            URL url = new URL(endpoint);
+            
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            
+            connection.setRequestProperty("accept", "application/json");
+            connection.setRequestProperty("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYTQ4NzMwZDQ4NTdhZWU3MzczYTAzZTJjNDE4YzQ0ZiIsIm5iZiI6MTU4MDMzMjI1Mi43NTYsInN1YiI6IjVlMzFmNGRjOThmMWYxMDAwZjAwM2UzNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.JC3_vSjWY8m4sd8xNZWB2lipv9FPirjbjBwuvMVqaLY");
+            
+            //Leer la respuesta del servidor
+            BufferedReader reader = new BufferedReader( new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line; 
+            
+            while ((line = reader.readLine()) != null ) {
+                response.append(line);
+            }
+            reader.close();
+            
+            System.out.println("Respuesta de endpoint: " + response);
+            
+            JSONObject jsonObject = new JSONObject(response.toString());
+            JSONArray results = jsonObject.getJSONArray("results");
+            
+            for(int i = 0; i < results.length(); i++) {
+                JSONObject movieJson = results.getJSONObject(i);
+                
+                int id = movieJson.getInt("id");
+                String title = movieJson.getString("title");
+                double rating = movieJson.getDouble("vote_average");
+                String releaseDate = movieJson.getString("release_date");
+                String language = movieJson.getString("original_language");
+                String overview = movieJson.getString("overview");
+                
+                Movie movie = new Movie(id, title, rating, releaseDate, language, overview);
+                movies.add(movie);
+            }
+            
+            for(Movie movie: movies) {
+                System.out.println("Id: " + movie.getId() + "Title: " +movie.getTitle());
+            }
+            
+            refreshTable();
+            
+        } catch (Exception e) {
+            
+            JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
+        }
     }
 
     /**
@@ -248,16 +308,25 @@ public class MainFrame extends JFrame {
      * Refresh JTable using movie collection
      */
     private void refreshTable() {
-
         clearTable();
+        
+        for(Movie movie : movies) {
+            Object[] row = {
+                movie.getId(),
+                movie.getTitle(),
+                movie.getRating(),
+                movie.getReleaseDate(),
+                movie.getLanguage()
+            };
+            tableModel.addRow(row);
+        }
     }
 
     /**
      * Remove all rows from JTable
      */
     private void clearTable() {
-
-        
+        tableModel.setRowCount(0);
     }
 
     // =========================

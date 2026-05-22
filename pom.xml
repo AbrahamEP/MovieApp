@@ -10,4 +10,11 @@
         <maven.compiler.release>25</maven.compiler.release>
         <exec.mainClass>com.mycompany.movieapp.MovieApp</exec.mainClass>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.json</groupId>
+             <artifactId>json</artifactId>
+             <version>20240303</version>
+        </dependency>
+    </dependencies>
 </project>
