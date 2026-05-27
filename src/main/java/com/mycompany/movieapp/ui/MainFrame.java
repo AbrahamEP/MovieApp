@@ -179,13 +179,13 @@ public class MainFrame extends JFrame {
         clearTable();
         try {
             movies = movieService.getTopRatedMovies();
-
             refreshTable();
 
         } catch (Exception e) {
 
             JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
         }
+        //Comentario
     }
 
 
