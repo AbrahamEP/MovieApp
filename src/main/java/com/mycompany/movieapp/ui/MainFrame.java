@@ -8,9 +8,8 @@ package com.mycompany.movieapp.ui;
  *
  * @author abrahamescamillapinelo
  */
-
-
 import com.mycompany.movieapp.model.Movie;
+import com.mycompany.movieapp.services.MovieService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -29,7 +28,6 @@ public class MainFrame extends JFrame {
     // =========================
     // COMPONENTS
     // =========================
-
     private JTextField txtSearch;
     private JButton btnSearch;
 
@@ -45,13 +43,12 @@ public class MainFrame extends JFrame {
     // =========================
     // STATE
     // =========================
-
     private List<Movie> movies;
+    MovieService movieService;
 
     // =========================
     // CONSTRUCTOR
     // =========================
-
     public MainFrame() {
 
         movies = new ArrayList<>();
@@ -62,14 +59,12 @@ public class MainFrame extends JFrame {
         addComponents();
         registerEvents();
 
-        // Temporary fake data
-        loadFakeData();
+        movieService = new MovieService();
     }
 
     // =========================
     // INITIALIZATION
     // =========================
-
     private void initializeFrame() {
 
         setTitle("MovieApp");
@@ -90,7 +85,7 @@ public class MainFrame extends JFrame {
         btnUpcomingMovies = new JButton("Upcoming Movies");
 
         btnViewDetails = new JButton("View Details");
-        
+
         tableModel = new DefaultTableModel();
         tblMovies = new JTable(tableModel);
 
@@ -115,7 +110,6 @@ public class MainFrame extends JFrame {
         // =========================================
         // TOP PANEL
         // =========================================
-
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
@@ -140,13 +134,11 @@ public class MainFrame extends JFrame {
         // =========================================
         // CENTER PANEL
         // =========================================
-
         JScrollPane scrollPane = new JScrollPane(tblMovies);
 
         // =========================================
         // BOTTOM PANEL
         // =========================================
-
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         bottomPanel.add(btnViewDetails);
@@ -154,7 +146,6 @@ public class MainFrame extends JFrame {
         // =========================================
         // ADD TO MAIN PANEL
         // =========================================
-
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -165,7 +156,6 @@ public class MainFrame extends JFrame {
     // =========================
     // EVENTS
     // =========================
-
     private void registerEvents() {
 
         btnTopRatedMovies.addActionListener(e -> loadTopRatedMovies());
@@ -182,68 +172,27 @@ public class MainFrame extends JFrame {
     // =========================
     // ACTION METHODS
     // =========================
-
     /**
-     * TODO:
-     * Call movie service and load top rated movies from API
+     * TODO: Call movie service and load top rated movies from API
      */
     private void loadTopRatedMovies() {
-        
-        String endpoint = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1";
-        
+        clearTable();
         try {
-            URL url = new URL(endpoint);
-            
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            
-            connection.setRequestProperty("accept", "application/json");
-            connection.setRequestProperty("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxYTQ4NzMwZDQ4NTdhZWU3MzczYTAzZTJjNDE4YzQ0ZiIsIm5iZiI6MTU4MDMzMjI1Mi43NTYsInN1YiI6IjVlMzFmNGRjOThmMWYxMDAwZjAwM2UzNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.JC3_vSjWY8m4sd8xNZWB2lipv9FPirjbjBwuvMVqaLY");
-            
-            //Leer la respuesta del servidor
-            BufferedReader reader = new BufferedReader( new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line; 
-            
-            while ((line = reader.readLine()) != null ) {
-                response.append(line);
-            }
-            reader.close();
-            
-            System.out.println("Respuesta de endpoint: " + response);
-            
-            JSONObject jsonObject = new JSONObject(response.toString());
-            JSONArray results = jsonObject.getJSONArray("results");
-            
-            for(int i = 0; i < results.length(); i++) {
-                JSONObject movieJson = results.getJSONObject(i);
-                
-                int id = movieJson.getInt("id");
-                String title = movieJson.getString("title");
-                double rating = movieJson.getDouble("vote_average");
-                String releaseDate = movieJson.getString("release_date");
-                String language = movieJson.getString("original_language");
-                String overview = movieJson.getString("overview");
-                
-                Movie movie = new Movie(id, title, rating, releaseDate, language, overview);
-                movies.add(movie);
-            }
-            
-            for(Movie movie: movies) {
-                System.out.println("Id: " + movie.getId() + "Title: " +movie.getTitle());
-            }
-            
+            movies = movieService.getTopRatedMovies();
+
             refreshTable();
-            
+
         } catch (Exception e) {
-            
+
             JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
         }
     }
 
+
+  
+
     /**
-     * TODO:
-     * Call movie service and load top rated TV shows from API
+     * TODO: Call movie service and load top rated TV shows from API
      */
     private void loadTopRatedTVShows() {
 
@@ -252,8 +201,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * TODO:
-     * Call movie service and load upcoming movies from API
+     * TODO: Call movie service and load upcoming movies from API
      */
     private void loadUpcomingMovies() {
 
@@ -262,8 +210,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * TODO:
-     * Search movies using API
+     * TODO: Search movies using API
      */
     private void searchMovies() {
 
@@ -282,8 +229,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * TODO:
-     * Open details dialog with selected movie
+     * TODO: Open details dialog with selected movie
      */
     private void openMovieDetails() {
 
@@ -297,20 +243,18 @@ public class MainFrame extends JFrame {
             return;
         }
 
-        
     }
 
     // =========================
     // TABLE METHODS
     // =========================
-
     /**
      * Refresh JTable using movie collection
      */
     private void refreshTable() {
         clearTable();
-        
-        for(Movie movie : movies) {
+
+        for (Movie movie : movies) {
             Object[] row = {
                 movie.getId(),
                 movie.getTitle(),
@@ -332,7 +276,6 @@ public class MainFrame extends JFrame {
     // =========================
     // TEMPORARY TEST DATA
     // =========================
-
     /**
      * Temporary fake data
      */
@@ -371,7 +314,6 @@ public class MainFrame extends JFrame {
     // =========================
     // MAIN
     // =========================
-
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {

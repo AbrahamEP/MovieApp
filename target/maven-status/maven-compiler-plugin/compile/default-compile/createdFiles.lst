@@ -1,4 +1,6 @@
 com/mycompany/movieapp/ui/MainFrame.class
-com/mycompany/movieapp/ui/MovieDetailsDialog.class
 com/mycompany/movieapp/model/Movie.class
+com/mycompany/movieapp/ui/MovieDetailsDialog.class
 com/mycompany/movieapp/MovieApp.class
+com/mycompany/movieapp/services/MovieService.class
+network/TMDBClient.class
