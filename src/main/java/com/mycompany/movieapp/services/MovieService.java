@@ -9,6 +9,8 @@ package com.mycompany.movieapp.services;
  * @author abrahamescamillapinelo
  */
 import com.mycompany.movieapp.model.Movie;
+import com.mycompany.movieapp.model.TvShow;
+import com.mycompany.movieapp.utils.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,34 +27,47 @@ import network.TMDBClient;
 public class MovieService {
     
     TMDBClient client = new TMDBClient();
-    
-    private ArrayList<Movie> parseMovies(String jsonResponse) {
-        ArrayList<Movie> parsedMovies = new ArrayList<>();
-        
-        JSONObject jsonObject = new JSONObject(jsonResponse);
-        JSONArray results = jsonObject.getJSONArray("results");
-
-        for (int i = 0; i < results.length(); i++) {
-            JSONObject movieJson = results.getJSONObject(i);
-
-            int id = movieJson.getInt("id");
-            String title = movieJson.getString("title");
-            double rating = movieJson.getDouble("vote_average");
-            String releaseDate = movieJson.getString("release_date");
-            String language = movieJson.getString("original_language");
-            String overview = movieJson.getString("overview");
-
-            Movie movie = new Movie(id, title, rating, releaseDate, language, overview);
-            parsedMovies.add(movie);
-        }
-        
-        return parsedMovies;
-    }
+    JsonParser parser = new JsonParser();
+    ArrayList<Movie> movies;
+    ArrayList<TvShow> shows;
     
     public ArrayList<Movie> getTopRatedMovies() throws Exception {
         String endpoint = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1";
         String jsonResponse = client.sendGetRequest(endpoint);
-        return parseMovies(jsonResponse);
+        movies = parser.parseMovies(jsonResponse);
+        return movies;
     }
+    
+    public ArrayList<Movie> getUpcomingMovies() throws Exception {
+        //TODO: Obtener las peliculas por venir
+        String endpoint = "https://api.themoviedb.org/3/movie/upcoming";
+        String jsonResponse = client.sendGetRequest(endpoint);
+        movies = parser.parseMovies(jsonResponse);
+        return movies;
+    }
+    
+    public ArrayList<TvShow> getTopRatedTVShows() throws Exception {
+        String endpoint = "https://api.themoviedb.org/3/trending/tv/day?language=en-US"; 
+        String jsonReponse = client.sendGetRequest(endpoint);
+        shows = parser.parseTvShows(jsonReponse);
+        System.out.println("TVSHows: " + jsonReponse);
+        return shows;
+    }
+    
+    public Movie getMovieById(int id) {
+        
+        for(int i = 0; i < movies.size(); i++) {
+            //Buscar pelicula por ID
+            Movie currentMovie = movies.get(i);
+            if(currentMovie.getId() == id) {
+                return currentMovie;
+            }
+        }
+        return null;
+    }
+    
+    /*public ArrayList<TVShow> getTvShows() {
+        return null;
+    }*/
 
 }

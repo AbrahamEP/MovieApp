@@ -9,6 +9,7 @@ package com.mycompany.movieapp.ui;
  * @author abrahamescamillapinelo
  */
 import com.mycompany.movieapp.model.Movie;
+import com.mycompany.movieapp.model.TvShow;
 import com.mycompany.movieapp.services.MovieService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.net.HttpURLConnection;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import com.mycompany.movieapp.ui.MovieDetailsDialog;
+import com.mycompany.movieapp.model.MovieTypes;
 
 public class MainFrame extends JFrame {
 
@@ -43,8 +46,10 @@ public class MainFrame extends JFrame {
     // =========================
     // STATE
     // =========================
-    private List<Movie> movies;
+    private ArrayList<Movie> movies;
+    private ArrayList<TvShow> shows;
     MovieService movieService;
+    private MovieTypes movieType;
 
     // =========================
     // CONSTRUCTOR
@@ -111,6 +116,7 @@ public class MainFrame extends JFrame {
         // TOP PANEL
         // =========================================
         JPanel topPanel = new JPanel();
+        topPanel.setBackground(Color.red);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
         // Search Panel
@@ -185,19 +191,22 @@ public class MainFrame extends JFrame {
 
             JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
         }
-        //Comentario
     }
-
-
-  
 
     /**
      * TODO: Call movie service and load top rated TV shows from API
      */
     private void loadTopRatedTVShows() {
 
-        JOptionPane.showMessageDialog(this,
-                "TODO: Load Top Rated TV Shows");
+        clearTable();
+        try {
+            shows = movieService.getTopRatedTVShows();
+            refreshTable();
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this, "Error al cargar shows");
+        }
     }
 
     /**
@@ -205,8 +214,16 @@ public class MainFrame extends JFrame {
      */
     private void loadUpcomingMovies() {
 
-        JOptionPane.showMessageDialog(this,
-                "TODO: Load Upcoming Movies");
+        clearTable();
+        try {
+            movies = movieService.getUpcomingMovies();
+            refreshTable();
+            
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
+        }
     }
 
     /**
@@ -243,6 +260,15 @@ public class MainFrame extends JFrame {
             return;
         }
 
+        int idMovie = (int) tableModel.getValueAt(selectedRow, 0);
+
+        Movie selectedMovie = movieService.getMovieById(idMovie);
+
+        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie);
+
+        details.setSize(600, 600);
+        details.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        details.setVisible(true);
     }
 
     // =========================
@@ -253,17 +279,32 @@ public class MainFrame extends JFrame {
      */
     private void refreshTable() {
         clearTable();
-
-        for (Movie movie : movies) {
-            Object[] row = {
-                movie.getId(),
-                movie.getTitle(),
-                movie.getRating(),
-                movie.getReleaseDate(),
-                movie.getLanguage()
-            };
-            tableModel.addRow(row);
+        switch (movieType) {
+            case MOVIE:
+                for (Movie movie : movies) {
+                    Object[] row = {
+                        movie.getId(),
+                        movie.getTitle(),
+                        movie.getRating(),
+                        movie.getReleaseDate(),
+                        movie.getLanguage()
+                    };
+                    tableModel.addRow(row);
+                }
+                
+            case TV:
+                for (TvShow show : shows) {
+                    Object[] row = {
+                        show.getId(),
+                        show.getName(),
+                        show.getRating(),
+                        show.getOverview()
+                        
+                    };
+                    tableModel.addRow(row);
+                }
         }
+
     }
 
     /**
@@ -271,44 +312,6 @@ public class MainFrame extends JFrame {
      */
     private void clearTable() {
         tableModel.setRowCount(0);
-    }
-
-    // =========================
-    // TEMPORARY TEST DATA
-    // =========================
-    /**
-     * Temporary fake data
-     */
-    private void loadFakeData() {
-
-        movies.add(new Movie(
-                1,
-                "Dune Part Two",
-                8.8,
-                "2024-03-01",
-                "EN",
-                "Epic science fiction movie."
-        ));
-
-        movies.add(new Movie(
-                2,
-                "The Batman",
-                7.9,
-                "2022-03-04",
-                "EN",
-                "Batman investigates corruption in Gotham."
-        ));
-
-        movies.add(new Movie(
-                3,
-                "Interstellar",
-                8.6,
-                "2014-11-07",
-                "EN",
-                "Space exploration to save humanity."
-        ));
-
-        refreshTable();
     }
 
     // =========================
