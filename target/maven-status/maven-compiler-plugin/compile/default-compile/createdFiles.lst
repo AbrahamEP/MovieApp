@@ -5,6 +5,6 @@ com/mycompany/movieapp/ui/MainFrame$1.class
 com/mycompany/movieapp/utils/JsonParser.class
 com/mycompany/movieapp/ui/MovieDetailsDialog.class
 com/mycompany/movieapp/MovieApp.class
+com/mycompany/movieapp/model/LoadedContentType.class
 com/mycompany/movieapp/services/MovieService.class
 network/TMDBClient.class
-com/mycompany/movieapp/model/MovieTypes.class

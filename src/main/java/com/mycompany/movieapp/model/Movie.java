@@ -117,5 +117,15 @@ public class Movie {
         this.overview = overview;
     }
     
+    public void setText(String text) {
+        
+    }
     
+    public void setText() {
+        
+    }
+    
+    public void setText(String text, String text2) {
+        
+    }
 }

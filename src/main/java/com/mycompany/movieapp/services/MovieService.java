@@ -30,7 +30,9 @@ public class MovieService {
     JsonParser parser = new JsonParser();
     ArrayList<Movie> movies;
     ArrayList<TvShow> shows;
+    ArrayList<Movie> watchlist = new ArrayList();
     
+    //Métodos para obtener informacion de MovieAPI
     public ArrayList<Movie> getTopRatedMovies() throws Exception {
         String endpoint = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1";
         String jsonResponse = client.sendGetRequest(endpoint);
@@ -54,6 +56,7 @@ public class MovieService {
         return shows;
     }
     
+    //Método de ayuda para obtener pelicula por ID
     public Movie getMovieById(int id) {
         
         for(int i = 0; i < movies.size(); i++) {
@@ -66,8 +69,45 @@ public class MovieService {
         return null;
     }
     
-    /*public ArrayList<TVShow> getTvShows() {
-        return null;
-    }*/
-
+    //Metodos para BD
+    public boolean addMovieToWatchlist(Movie movie) {
+        
+        if(movie == null) {
+            return false;
+        }
+        
+        if(isMovieInWatchlist(movie.getId())) {
+            return false;
+        }
+        
+        watchlist.add(movie);
+        return true;
+    }
+    
+    public boolean isMovieInWatchlist(int id) {
+        
+        for(Movie movie: watchlist) {
+            if(movie.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public ArrayList<Movie> getWatchlist() {
+        return watchlist;
+    }
+    
+    public boolean removeFromWatchlist(int movieId) {
+        
+        for(int i = 0; i < watchlist.size(); i++) {
+            Movie currentMovie = watchlist.get(i);
+            
+            if(currentMovie.getId() == movieId) {
+                watchlist.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -8,7 +8,9 @@ package com.mycompany.movieapp.model;
  *
  * @author abrahamescamillapinelo
  */
-public enum MovieTypes {
-    MOVIE,
-    TV
+public enum LoadedContentType {
+    TOP_MOVIES,
+    INCOMING_MOVIES,
+    TV_SHOWS,
+    WATCHLIST
 }

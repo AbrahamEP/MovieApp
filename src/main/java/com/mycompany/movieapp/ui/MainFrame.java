@@ -24,7 +24,7 @@ import java.net.HttpURLConnection;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import com.mycompany.movieapp.ui.MovieDetailsDialog;
-import com.mycompany.movieapp.model.MovieTypes;
+import com.mycompany.movieapp.model.LoadedContentType;
 
 public class MainFrame extends JFrame {
 
@@ -42,6 +42,9 @@ public class MainFrame extends JFrame {
     private DefaultTableModel tableModel;
 
     private JButton btnViewDetails;
+    
+    private JButton showWatchlistButton;
+    private JButton deleteFromWatchlistButton;
 
     // =========================
     // STATE
@@ -49,7 +52,7 @@ public class MainFrame extends JFrame {
     private ArrayList<Movie> movies;
     private ArrayList<TvShow> shows;
     MovieService movieService;
-    private MovieTypes movieType;
+    private LoadedContentType contentType;
 
     // =========================
     // CONSTRUCTOR
@@ -73,7 +76,7 @@ public class MainFrame extends JFrame {
     private void initializeFrame() {
 
         setTitle("MovieApp");
-        setSize(1000, 600);
+        setSize(1500, 1000);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -90,6 +93,9 @@ public class MainFrame extends JFrame {
         btnUpcomingMovies = new JButton("Upcoming Movies");
 
         btnViewDetails = new JButton("View Details");
+        
+        showWatchlistButton = new JButton("Show Watchlist");
+        deleteFromWatchlistButton = new JButton("Delete From Watchlist");
 
         tableModel = new DefaultTableModel();
         tblMovies = new JTable(tableModel);
@@ -132,6 +138,8 @@ public class MainFrame extends JFrame {
         buttonsPanel.add(btnTopRatedMovies);
         buttonsPanel.add(btnTopRatedTVShows);
         buttonsPanel.add(btnUpcomingMovies);
+        buttonsPanel.add(showWatchlistButton);
+        buttonsPanel.add(deleteFromWatchlistButton);
 
         topPanel.add(searchPanel);
         topPanel.add(Box.createVerticalStrut(10));
@@ -173,6 +181,10 @@ public class MainFrame extends JFrame {
         btnSearch.addActionListener(e -> searchMovies());
 
         btnViewDetails.addActionListener(e -> openMovieDetails());
+        
+        showWatchlistButton.addActionListener(e -> showWatchlistButtonAction());
+        
+        deleteFromWatchlistButton.addActionListener(e -> removeWatchlistButtonAction());
     }
 
     // =========================
@@ -185,12 +197,15 @@ public class MainFrame extends JFrame {
         clearTable();
         try {
             movies = movieService.getTopRatedMovies();
+            contentType = LoadedContentType.TOP_MOVIES;
             refreshTable();
 
         } catch (Exception e) {
 
             JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
         }
+        
+        Movie movie = new Movie(0, "Batman", "8.5", "", "EN", "");
     }
 
     /**
@@ -201,6 +216,7 @@ public class MainFrame extends JFrame {
         clearTable();
         try {
             shows = movieService.getTopRatedTVShows();
+            contentType = LoadedContentType.TV_SHOWS;
             refreshTable();
 
         } catch (Exception e) {
@@ -217,6 +233,7 @@ public class MainFrame extends JFrame {
         clearTable();
         try {
             movies = movieService.getUpcomingMovies();
+            contentType = LoadedContentType.INCOMING_MOVIES;
             refreshTable();
             
 
@@ -252,23 +269,58 @@ public class MainFrame extends JFrame {
 
         int selectedRow = tblMovies.getSelectedRow();
 
-        if (selectedRow == -1) {
+        if(selectedRow == -1) {
 
             JOptionPane.showMessageDialog(this,
                     "Please select a movie.");
-
+            return;
+        }
+        
+        if(contentType == LoadedContentType.TV_SHOWS) {
+            JOptionPane.showMessageDialog(this,
+                    "Tienes que seleccionar pelicula");
             return;
         }
 
         int idMovie = (int) tableModel.getValueAt(selectedRow, 0);
+        
 
         Movie selectedMovie = movieService.getMovieById(idMovie);
 
-        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie);
+        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, movieService);
 
         details.setSize(600, 600);
-        details.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        details.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         details.setVisible(true);
+    }
+    
+    private void removeWatchlistButtonAction() {
+        int selectedRow = tblMovies.getSelectedRow();
+        
+        if(selectedRow == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Please select a movie.");
+            return;
+        }
+        int id = (int) tableModel.getValueAt(selectedRow, 0);
+        boolean wasRemoved = movieService.removeFromWatchlist(id);
+        
+        if(wasRemoved) {
+            JOptionPane.showMessageDialog(null, "Pelicula eliminada correctamente");
+            refreshTable();
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al eliminar pelicula del Watchlist");
+        }
+        
+    }
+    
+    private void showWatchlistButtonAction() {
+        clearTable();
+        
+        movies = movieService.getWatchlist();
+        contentType = LoadedContentType.WATCHLIST;
+        
+        refreshTable();
     }
 
     // =========================
@@ -279,8 +331,15 @@ public class MainFrame extends JFrame {
      */
     private void refreshTable() {
         clearTable();
-        switch (movieType) {
-            case MOVIE:
+        
+        if(contentType == null) {
+            return;
+        }
+        
+        switch (contentType) {
+            case LoadedContentType.WATCHLIST:
+            case LoadedContentType.INCOMING_MOVIES:
+            case LoadedContentType.TOP_MOVIES:
                 for (Movie movie : movies) {
                     Object[] row = {
                         movie.getId(),
@@ -291,18 +350,20 @@ public class MainFrame extends JFrame {
                     };
                     tableModel.addRow(row);
                 }
+                break;
                 
-            case TV:
+            case LoadedContentType.TV_SHOWS:
                 for (TvShow show : shows) {
                     Object[] row = {
                         show.getId(),
                         show.getName(),
                         show.getRating(),
                         show.getOverview()
-                        
                     };
                     tableModel.addRow(row);
                 }
+                break;
+             
         }
 
     }

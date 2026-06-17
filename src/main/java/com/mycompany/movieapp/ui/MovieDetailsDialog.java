@@ -11,6 +11,7 @@ package com.mycompany.movieapp.ui;
 
 
 import com.mycompany.movieapp.model.Movie;
+import com.mycompany.movieapp.services.MovieService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -30,12 +31,14 @@ public class MovieDetailsDialog extends JDialog {
     private JButton btnClose;
 
     private Movie movie;
+    private MovieService movieService;
 
-    public MovieDetailsDialog(Frame owner, Movie movie) {
+    public MovieDetailsDialog(Frame owner, Movie movie, MovieService movieService) {
 
         super(owner, "Movie Details", true);
 
         this.movie = movie;
+        this.movieService = movieService;
 
         initializeDialog();
         initializeComponents();
@@ -161,8 +164,14 @@ public class MovieDetailsDialog extends JDialog {
      * Add movie to watchlist collection
      */
     private void addToWatchlist() {
-
-        JOptionPane.showMessageDialog(this,
-                "TODO: Add to watchlist");
+        
+        boolean wasAdded = movieService.addMovieToWatchlist(movie);
+        
+        if(wasAdded) {
+            JOptionPane.showMessageDialog(null, "La pelicula se guardó correctamente");
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al guardar la pelicula");
+        }
+        
     }
 }
