@@ -205,7 +205,6 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
         }
         
-        Movie movie = new Movie(0, "Batman", "8.5", "", "EN", "");
     }
 
     /**
