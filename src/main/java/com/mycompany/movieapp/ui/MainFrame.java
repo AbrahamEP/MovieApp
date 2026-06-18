@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import com.mycompany.movieapp.ui.MovieDetailsDialog;
 import com.mycompany.movieapp.model.LoadedContentType;
+import database.WatchlistStore;
 
 public class MainFrame extends JFrame {
 
@@ -53,6 +54,7 @@ public class MainFrame extends JFrame {
     private ArrayList<TvShow> shows;
     MovieService movieService;
     private LoadedContentType contentType;
+    private WatchlistStore watchlistStore;
 
     // =========================
     // CONSTRUCTOR
@@ -60,7 +62,8 @@ public class MainFrame extends JFrame {
     public MainFrame() {
 
         movies = new ArrayList<>();
-
+        watchlistStore = new WatchlistStore();
+        
         initializeFrame();
         initializeComponents();
         configureTable();
@@ -68,6 +71,7 @@ public class MainFrame extends JFrame {
         registerEvents();
 
         movieService = new MovieService();
+        
     }
 
     // =========================
@@ -286,7 +290,7 @@ public class MainFrame extends JFrame {
 
         Movie selectedMovie = movieService.getMovieById(idMovie);
 
-        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, movieService);
+        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, watchlistStore);
 
         details.setSize(600, 600);
         details.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -302,7 +306,7 @@ public class MainFrame extends JFrame {
             return;
         }
         int id = (int) tableModel.getValueAt(selectedRow, 0);
-        boolean wasRemoved = movieService.removeFromWatchlist(id);
+        boolean wasRemoved = watchlistStore.removeFromWatchlist(id);
         
         if(wasRemoved) {
             JOptionPane.showMessageDialog(null, "Pelicula eliminada correctamente");
@@ -316,7 +320,7 @@ public class MainFrame extends JFrame {
     private void showWatchlistButtonAction() {
         clearTable();
         
-        movies = movieService.getWatchlist();
+        movies = watchlistStore.getWatchlist();
         contentType = LoadedContentType.WATCHLIST;
         
         refreshTable();

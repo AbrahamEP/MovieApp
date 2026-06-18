@@ -6,4 +6,5 @@
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/ui/MainFrame.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/ui/MovieDetailsDialog.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/utils/JsonParser.java
+/Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/database/WatchlistStore.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/network/TMDBClient.java

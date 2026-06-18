@@ -69,45 +69,4 @@ public class MovieService {
         return null;
     }
     
-    //Metodos para BD
-    public boolean addMovieToWatchlist(Movie movie) {
-        
-        if(movie == null) {
-            return false;
-        }
-        
-        if(isMovieInWatchlist(movie.getId())) {
-            return false;
-        }
-        
-        watchlist.add(movie);
-        return true;
-    }
-    
-    public boolean isMovieInWatchlist(int id) {
-        
-        for(Movie movie: watchlist) {
-            if(movie.getId() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public ArrayList<Movie> getWatchlist() {
-        return watchlist;
-    }
-    
-    public boolean removeFromWatchlist(int movieId) {
-        
-        for(int i = 0; i < watchlist.size(); i++) {
-            Movie currentMovie = watchlist.get(i);
-            
-            if(currentMovie.getId() == movieId) {
-                watchlist.remove(i);
-                return true;
-            }
-        }
-        return false;
-    }
 }

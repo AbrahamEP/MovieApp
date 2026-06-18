@@ -3,6 +3,7 @@ com/mycompany/movieapp/model/TvShow.class
 com/mycompany/movieapp/model/Movie.class
 com/mycompany/movieapp/ui/MainFrame$1.class
 com/mycompany/movieapp/utils/JsonParser.class
+database/WatchlistStore.class
 com/mycompany/movieapp/ui/MovieDetailsDialog.class
 com/mycompany/movieapp/MovieApp.class
 com/mycompany/movieapp/model/LoadedContentType.class
