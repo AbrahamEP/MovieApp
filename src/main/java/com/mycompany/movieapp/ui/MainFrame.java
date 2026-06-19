@@ -287,7 +287,6 @@ public class MainFrame extends JFrame {
 
         int idMovie = (int) tableModel.getValueAt(selectedRow, 0);
         
-
         Movie selectedMovie = movieService.getMovieById(idMovie);
 
         MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, watchlistStore);
@@ -339,7 +338,7 @@ public class MainFrame extends JFrame {
             return;
         }
         
-        switch (contentType) {
+        switch(contentType) {
             case LoadedContentType.WATCHLIST:
             case LoadedContentType.INCOMING_MOVIES:
             case LoadedContentType.TOP_MOVIES:
