@@ -158,6 +158,20 @@ public class MovieDetailsDialog extends JDialog {
                 "Language: " + movie.getLanguage());
 
         txtOverview.setText(movie.getOverview());
+        
+        updateWatchlistButtonState();
+    }
+    
+    private void updateWatchlistButtonState() {
+        boolean isAlreadyInWatchlist = watchlistStore.isMovieInWatchlist(movie.getId());
+        
+        if(isAlreadyInWatchlist) {
+            btnAddToWatchlist.setText("Already in Watchlist");
+            btnAddToWatchlist.setEnabled(false);
+        } else {
+            btnAddToWatchlist.setText("Add to watchlist");
+            btnAddToWatchlist.setEnabled(true);
+        }
     }
 
     /**
@@ -174,5 +188,6 @@ public class MovieDetailsDialog extends JDialog {
             JOptionPane.showMessageDialog(null, "Error al guardar la pelicula");
         }
         
+        updateWatchlistButtonState();
     }
 }

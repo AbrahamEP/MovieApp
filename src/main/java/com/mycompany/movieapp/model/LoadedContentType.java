@@ -9,8 +9,19 @@ package com.mycompany.movieapp.model;
  * @author abrahamescamillapinelo
  */
 public enum LoadedContentType {
-    TOP_MOVIES,
-    INCOMING_MOVIES,
-    TV_SHOWS,
-    WATCHLIST
+    TOP_MOVIES("Top Rated Movies"),
+    INCOMING_MOVIES("Incoming Movies"),
+    TV_SHOWS("TV Shows"),
+    WATCHLIST("Watchlist");
+    
+    private String text;
+    
+    LoadedContentType(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return this.text;
+    }
 }

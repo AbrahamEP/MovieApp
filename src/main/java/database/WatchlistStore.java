@@ -19,11 +19,8 @@ import java.sql.ResultSet;
 public class WatchlistStore {
     
     private static final String DATABASE_URL = "jdbc:sqlite:movieapp.db";
-            
-    private ArrayList<Movie> watchlist;
     
     public WatchlistStore() {
-        watchlist = new ArrayList<>();
         createTableIfNeeded();
     }
     
@@ -74,10 +71,10 @@ public class WatchlistStore {
                      VALUES (?,?,?,?,?,?);
                      """;
         
-        try{
+        try(
             Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            
+            PreparedStatement statement = connection.prepareStatement(sql);)
+        { 
             statement.setInt(1, movie.getId());
             statement.setString(2, movie.getTitle());
             statement.setDouble(3, movie.getRating());
@@ -97,25 +94,36 @@ public class WatchlistStore {
     
     public boolean isMovieInWatchlist(int id) {
         
-        for(Movie movie: watchlist) {
-            if(movie.getId() == id) {
-                return true;
-            }
+        String sql = "SELECT id FROM watchlist WHERE id = ?;";
+        try(
+            Connection conn = getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            
+           )
+        {
+            statement.setInt(1, id);
+            
+            try(ResultSet result = statement.executeQuery()) {
+                return result.next();
+            } 
+            
+        } catch(Exception ex) {
+            return false;
         }
-        return false;
     }
     
     public ArrayList<Movie> getWatchlist() {
-        
+        ArrayList<Movie> watchlist = new ArrayList();
         String sql = """
                         SELECT * FROM watchlist;
                      """;
         
-        try{
+        try(
             Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet result = statement.executeQuery();
-            
+           )
+        {
             while(result.next()) {
                 Movie movie = new Movie(
                         result.getInt("id"),
@@ -136,15 +144,19 @@ public class WatchlistStore {
     }
     
     public boolean removeFromWatchlist(int movieId) {
+        String sql = "DELETE FROM watchlist WHERE id = ?;";
         
-        for(int i = 0; i < watchlist.size(); i++) {
-            Movie currentMovie = watchlist.get(i);
+        try(Connection conn = getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql)
+           )
+        {
+            statement.setInt(1, movieId);
             
-            if(currentMovie.getId() == movieId) {
-                watchlist.remove(i);
-                return true;
-            }
+            int rowsAffeected = statement.executeUpdate();
+            
+            return rowsAffeected > 0;
+        } catch (Exception ex) {
+            return false;
         }
-        return false;
     }
 }

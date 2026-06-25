@@ -35,17 +35,18 @@ public class MainFrame extends JFrame {
     private JTextField txtSearch;
     private JButton btnSearch;
 
-    private JButton btnTopRatedMovies;
-    private JButton btnTopRatedTVShows;
-    private JButton btnUpcomingMovies;
+    
 
     private JTable tblMovies;
     private DefaultTableModel tableModel;
 
     private JButton btnViewDetails;
     
-    private JButton showWatchlistButton;
+    
     private JButton deleteFromWatchlistButton;
+    
+    private JComboBox comboBox;
+    private JButton loadButton;
 
     // =========================
     // STATE
@@ -80,7 +81,6 @@ public class MainFrame extends JFrame {
     private void initializeFrame() {
 
         setTitle("MovieApp");
-        setSize(1500, 1000);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -92,15 +92,13 @@ public class MainFrame extends JFrame {
 
         btnSearch = new JButton("Search");
 
-        btnTopRatedMovies = new JButton("Top Rated Movies");
-        btnTopRatedTVShows = new JButton("Top Rated TV Shows");
-        btnUpcomingMovies = new JButton("Upcoming Movies");
-
         btnViewDetails = new JButton("View Details");
         
-        showWatchlistButton = new JButton("Show Watchlist");
         deleteFromWatchlistButton = new JButton("Delete From Watchlist");
 
+        initComboBox();
+        loadButton = new JButton("Load content");
+        
         tableModel = new DefaultTableModel();
         tblMovies = new JTable(tableModel);
 
@@ -126,7 +124,7 @@ public class MainFrame extends JFrame {
         // TOP PANEL
         // =========================================
         JPanel topPanel = new JPanel();
-        topPanel.setBackground(Color.red);
+        topPanel.setBackground(Color.WHITE);
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
         // Search Panel
@@ -139,10 +137,8 @@ public class MainFrame extends JFrame {
         // Buttons Panel
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        buttonsPanel.add(btnTopRatedMovies);
-        buttonsPanel.add(btnTopRatedTVShows);
-        buttonsPanel.add(btnUpcomingMovies);
-        buttonsPanel.add(showWatchlistButton);
+        buttonsPanel.add(comboBox);
+        buttonsPanel.add(loadButton);
         buttonsPanel.add(deleteFromWatchlistButton);
 
         topPanel.add(searchPanel);
@@ -170,23 +166,22 @@ public class MainFrame extends JFrame {
 
         add(mainPanel);
     }
+    
+    private void initComboBox() {
+        LoadedContentType[] items = LoadedContentType.values();
+        comboBox = new JComboBox(items);
+    }
 
     // =========================
     // EVENTS
     // =========================
     private void registerEvents() {
 
-        btnTopRatedMovies.addActionListener(e -> loadTopRatedMovies());
-
-        btnTopRatedTVShows.addActionListener(e -> loadTopRatedTVShows());
-
-        btnUpcomingMovies.addActionListener(e -> loadUpcomingMovies());
-
         btnSearch.addActionListener(e -> searchMovies());
 
         btnViewDetails.addActionListener(e -> openMovieDetails());
         
-        showWatchlistButton.addActionListener(e -> showWatchlistButtonAction());
+        loadButton.addActionListener(e -> loadButtonAction());
         
         deleteFromWatchlistButton.addActionListener(e -> removeWatchlistButtonAction());
     }
@@ -198,7 +193,6 @@ public class MainFrame extends JFrame {
      * TODO: Call movie service and load top rated movies from API
      */
     private void loadTopRatedMovies() {
-        clearTable();
         try {
             movies = movieService.getTopRatedMovies();
             contentType = LoadedContentType.TOP_MOVIES;
@@ -215,8 +209,6 @@ public class MainFrame extends JFrame {
      * TODO: Call movie service and load top rated TV shows from API
      */
     private void loadTopRatedTVShows() {
-
-        clearTable();
         try {
             shows = movieService.getTopRatedTVShows();
             contentType = LoadedContentType.TV_SHOWS;
@@ -232,8 +224,6 @@ public class MainFrame extends JFrame {
      * TODO: Call movie service and load upcoming movies from API
      */
     private void loadUpcomingMovies() {
-
-        clearTable();
         try {
             movies = movieService.getUpcomingMovies();
             contentType = LoadedContentType.INCOMING_MOVIES;
@@ -243,6 +233,32 @@ public class MainFrame extends JFrame {
         } catch (Exception e) {
 
             JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
+        }
+    }
+    
+    private void showWatchlistButtonAction() {
+        movies = watchlistStore.getWatchlist();
+        contentType = LoadedContentType.WATCHLIST;
+        
+        refreshTable();
+    }
+    
+    private void loadButtonAction() {
+        LoadedContentType selectedItem = (LoadedContentType) comboBox.getSelectedItem();
+        
+        switch(selectedItem) {
+            case TOP_MOVIES -> {
+                loadTopRatedMovies();
+            }
+            case INCOMING_MOVIES -> {
+                loadUpcomingMovies();
+            }
+            case TV_SHOWS -> {
+                loadTopRatedTVShows();
+            }
+            case WATCHLIST -> {
+                showWatchlistButtonAction();
+            }
         }
     }
 
@@ -313,17 +329,9 @@ public class MainFrame extends JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Error al eliminar pelicula del Watchlist");
         }
-        
     }
     
-    private void showWatchlistButtonAction() {
-        clearTable();
-        
-        movies = watchlistStore.getWatchlist();
-        contentType = LoadedContentType.WATCHLIST;
-        
-        refreshTable();
-    }
+    
 
     // =========================
     // TABLE METHODS
@@ -339,9 +347,7 @@ public class MainFrame extends JFrame {
         }
         
         switch(contentType) {
-            case LoadedContentType.WATCHLIST:
-            case LoadedContentType.INCOMING_MOVIES:
-            case LoadedContentType.TOP_MOVIES:
+            case LoadedContentType.WATCHLIST, LoadedContentType.INCOMING_MOVIES, LoadedContentType.TOP_MOVIES -> {
                 for (Movie movie : movies) {
                     Object[] row = {
                         movie.getId(),
@@ -352,9 +358,8 @@ public class MainFrame extends JFrame {
                     };
                     tableModel.addRow(row);
                 }
-                break;
-                
-            case LoadedContentType.TV_SHOWS:
+            }
+            case LoadedContentType.TV_SHOWS -> {
                 for (TvShow show : shows) {
                     Object[] row = {
                         show.getId(),
@@ -364,10 +369,8 @@ public class MainFrame extends JFrame {
                     };
                     tableModel.addRow(row);
                 }
-                break;
-             
+            }
         }
-
     }
 
     /**
