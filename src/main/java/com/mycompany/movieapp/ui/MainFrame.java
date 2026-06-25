@@ -46,7 +46,6 @@ public class MainFrame extends JFrame {
     private JButton deleteFromWatchlistButton;
     
     private JComboBox comboBox;
-    private JButton loadButton;
 
     // =========================
     // STATE
@@ -64,14 +63,14 @@ public class MainFrame extends JFrame {
 
         movies = new ArrayList<>();
         watchlistStore = new WatchlistStore();
+        movieService = new MovieService();
         
         initializeFrame();
         initializeComponents();
         configureTable();
         addComponents();
         registerEvents();
-
-        movieService = new MovieService();
+        loadFirstTime();
         
     }
 
@@ -97,7 +96,6 @@ public class MainFrame extends JFrame {
         deleteFromWatchlistButton = new JButton("Delete From Watchlist");
 
         initComboBox();
-        loadButton = new JButton("Load content");
         
         tableModel = new DefaultTableModel();
         tblMovies = new JTable(tableModel);
@@ -138,7 +136,6 @@ public class MainFrame extends JFrame {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         buttonsPanel.add(comboBox);
-        buttonsPanel.add(loadButton);
         buttonsPanel.add(deleteFromWatchlistButton);
 
         topPanel.add(searchPanel);
@@ -171,6 +168,10 @@ public class MainFrame extends JFrame {
         LoadedContentType[] items = LoadedContentType.values();
         comboBox = new JComboBox(items);
     }
+    
+    private void loadFirstTime() {
+        loadTopRatedMovies();
+    }
 
     // =========================
     // EVENTS
@@ -181,7 +182,7 @@ public class MainFrame extends JFrame {
 
         btnViewDetails.addActionListener(e -> openMovieDetails());
         
-        loadButton.addActionListener(e -> loadButtonAction());
+        comboBox.addActionListener(e -> loadButtonAction());
         
         deleteFromWatchlistButton.addActionListener(e -> removeWatchlistButtonAction());
     }
@@ -325,10 +326,11 @@ public class MainFrame extends JFrame {
         
         if(wasRemoved) {
             JOptionPane.showMessageDialog(null, "Pelicula eliminada correctamente");
-            refreshTable();
+            showWatchlistButtonAction();
         } else {
             JOptionPane.showMessageDialog(null, "Error al eliminar pelicula del Watchlist");
         }
+        refreshTable();
     }
     
     
