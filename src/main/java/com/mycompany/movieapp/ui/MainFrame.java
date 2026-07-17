@@ -26,7 +26,8 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import com.mycompany.movieapp.ui.MovieDetailsDialog;
 import com.mycompany.movieapp.model.LoadedContentType;
-import database.WatchlistStore;
+import database.DatabaseManager;
+import database.WatchlistRepository;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -56,7 +57,7 @@ public class MainFrame extends JFrame {
     private ArrayList<TvShow> shows;
     MovieService movieService;
     private LoadedContentType contentType;
-    private WatchlistStore watchlistStore;
+    private WatchlistRepository repository;
 
     // =========================
     // CONSTRUCTOR
@@ -64,7 +65,9 @@ public class MainFrame extends JFrame {
     public MainFrame() {
 
         movies = new ArrayList<>();
-        watchlistStore = new WatchlistStore();
+        DatabaseManager databaseManager = new DatabaseManager();
+        repository = new WatchlistRepository(databaseManager);
+        repository.createTableIfNeeded();
         movieService = new MovieService();
         
         initializeFrame();
@@ -252,10 +255,28 @@ public class MainFrame extends JFrame {
                 "Incoming movies loaded");
     }
     
-    private void showWatchlistButtonAction() {
-        movies = watchlistStore.getWatchlist();
+    private void loadWatchlist() {
+        /*
+         * STUDENT EXERCISE
+         *
+         * Retrieve every Movie stored in SQLite by calling repository.findAll().
+         *
+         * Practice:
+         * - Connecting a Swing action to the database layer
+         * - Converting the returned List<Movie> into the table data shown by the UI
+         * - Refreshing the JTable after local database state changes
+         *
+         * After retrieving the list:
+         * - Store it in the movies field
+         * - Set contentType to WATCHLIST
+         * - Refresh the JTable
+         *
+         * Why it matters:
+         * This method is the bridge between the repository and the visible
+         * watchlist screen students can test manually.
+         */
+        movies = new ArrayList<>();
         contentType = LoadedContentType.WATCHLIST;
-        
         refreshTable();
     }
     
@@ -273,7 +294,7 @@ public class MainFrame extends JFrame {
                 loadTopRatedTVShows();
             }
             case WATCHLIST -> {
-                showWatchlistButtonAction();
+                loadWatchlist();
             }
         }
     }
@@ -361,7 +382,7 @@ public class MainFrame extends JFrame {
             return;
         }
 
-        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, watchlistStore);
+        MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, repository);
 
         details.setSize(600, 600);
         details.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -413,10 +434,10 @@ public class MainFrame extends JFrame {
             return;
         }
         
-        boolean wasRemoved = watchlistStore.removeFromWatchlist(selectedMovie.getId());
+        boolean wasRemoved = repository.delete(selectedMovie.getId());
         if(wasRemoved) {
             JOptionPane.showMessageDialog(this, "Pelicula eliminada correctamente");
-            showWatchlistButtonAction();
+            loadWatchlist();
         } else {
             JOptionPane.showMessageDialog(this, "Error al borrar pelicula");
         }

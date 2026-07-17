@@ -11,8 +11,7 @@ package com.mycompany.movieapp.ui;
 
 
 import com.mycompany.movieapp.model.Movie;
-import com.mycompany.movieapp.services.MovieService;
-import database.WatchlistStore;
+import database.WatchlistRepository;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -33,16 +32,16 @@ public class MovieDetailsDialog extends JDialog {
     private JButton btnClose;
 
     private Movie movie;
-    private WatchlistStore watchlistStore;
+    private WatchlistRepository repository;
     
     private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w342";
 
-    public MovieDetailsDialog(Frame owner, Movie movie, WatchlistStore watchlistStore) {
+    public MovieDetailsDialog(Frame owner, Movie movie, WatchlistRepository repository) {
 
         super(owner, "Movie Details", true);
 
         this.movie = movie;
-        this.watchlistStore = watchlistStore;
+        this.repository = repository;
 
         initializeDialog();
         initializeComponents();
@@ -146,7 +145,7 @@ public class MovieDetailsDialog extends JDialog {
 
         btnClose.addActionListener(e -> dispose());
 
-        btnAddToWatchlist.addActionListener(e -> addToWatchlist());
+        btnAddToWatchlist.addActionListener(e -> addMovieToWatchlist());
     }
     
     private void loadLazyPoster() {
@@ -206,7 +205,7 @@ public class MovieDetailsDialog extends JDialog {
     }
     
     private void updateWatchlistButtonState() {
-        boolean isAlreadyInWatchlist = watchlistStore.isMovieInWatchlist(movie.getId());
+        boolean isAlreadyInWatchlist = repository.exists(movie.getId());
         
         if(isAlreadyInWatchlist) {
             btnAddToWatchlist.setText("Already in Watchlist");
@@ -217,20 +216,27 @@ public class MovieDetailsDialog extends JDialog {
         }
     }
 
-    /**
-     * TODO:
-     * Add movie to watchlist collection
-     */
-    private void addToWatchlist() {
-        
-        boolean wasAdded = watchlistStore.addMovieToWatchlist(movie);
-        
-        if(wasAdded) {
-            JOptionPane.showMessageDialog(null, "La pelicula se guardó correctamente");
-        } else {
-            JOptionPane.showMessageDialog(null, "Error al guardar la pelicula");
-        }
-        
+    private void addMovieToWatchlist() {
+        /*
+         * STUDENT EXERCISE
+         *
+         * Save the selected Movie using repository.save(movie).
+         *
+         * Practice:
+         * - Calling a database-layer method from a Swing event
+         * - Checking whether the save operation succeeded
+         * - Displaying an appropriate dialog message
+         * - Thinking about duplicate movies already in the watchlist
+         *
+         * Why it matters:
+         * This method connects the user's button click to the INSERT operation
+         * students will implement in WatchlistRepository.
+         */
+        JOptionPane.showMessageDialog(
+                this,
+                "Student exercise: implement repository.save(movie) and handle the result."
+        );
+
         updateWatchlistButtonState();
     }
 }
