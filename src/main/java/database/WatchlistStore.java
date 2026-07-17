@@ -22,10 +22,23 @@ public class WatchlistStore {
     
     public WatchlistStore() {
         createTableIfNeeded();
+        addPosterPathIfNeeded();
     }
     
     private Connection getConnection() throws Exception {
         return DriverManager.getConnection(DATABASE_URL);
+    }
+    
+    private void addPosterPathIfNeeded() {
+        String sql = "ALTER TABLE watchlist ADD COLUMN poster_path TEXT;";
+        
+        try(Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)
+        ) {
+            statement.executeUpdate();
+        } catch (Exception e) {
+            System.err.print(e.getMessage());
+        }
     }
     
     private void createTableIfNeeded() {
@@ -66,9 +79,10 @@ public class WatchlistStore {
                         rating,
                         release_date,
                         language,
-                        overview
+                        overview,
+                        poster_path
                      )
-                     VALUES (?,?,?,?,?,?);
+                     VALUES (?,?,?,?,?,?,?);
                      """;
         
         try(
@@ -81,6 +95,7 @@ public class WatchlistStore {
             statement.setString(4, movie.getReleaseDate());
             statement.setString(5, movie.getLanguage());
             statement.setString(6, movie.getOverview());
+            statement.setString(7, movie.getPosterPath());
             
             statement.executeUpdate();
             
@@ -131,7 +146,8 @@ public class WatchlistStore {
                         result.getDouble("rating"),
                         result.getString("release_date"),
                         result.getString("language"),
-                        result.getString("overview")
+                        result.getString("overview"),
+                        result.getString("poster_path")
                 );
                 watchlist.add(movie);
             }

@@ -54,8 +54,10 @@ public class JsonParser {
             String releaseDate = movieJson.getString("release_date");
             String language = movieJson.getString("original_language");
             String overview = movieJson.getString("overview");
+            
+            String posterPath = movieJson.optString("poster_path", "poster.jpg");
 
-            Movie movie = new Movie(id, title, rating, releaseDate, language, overview);
+            Movie movie = new Movie(id, title, rating, releaseDate, language, overview, posterPath);
             parsedMovies.add(movie);
         }
         

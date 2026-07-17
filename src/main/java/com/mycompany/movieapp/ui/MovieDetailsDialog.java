@@ -16,6 +16,7 @@ import database.WatchlistStore;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.net.URL;
 
 public class MovieDetailsDialog extends JDialog {
 
@@ -33,6 +34,8 @@ public class MovieDetailsDialog extends JDialog {
 
     private Movie movie;
     private WatchlistStore watchlistStore;
+    
+    private static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w342";
 
     public MovieDetailsDialog(Frame owner, Movie movie, WatchlistStore watchlistStore) {
 
@@ -46,6 +49,7 @@ public class MovieDetailsDialog extends JDialog {
         addComponents();
         loadMovieData();
         registerEvents();
+        loadLazyPoster();
     }
 
     private void initializeDialog() {
@@ -144,7 +148,46 @@ public class MovieDetailsDialog extends JDialog {
 
         btnAddToWatchlist.addActionListener(e -> addToWatchlist());
     }
-
+    
+    private void loadLazyPoster() {
+        String path = movie.getPosterPath();
+        
+        if(path == null || path.isBlank()) {
+            lblPoster.setText("Imagen no disponible");
+            return;
+        }
+        
+        lblPoster.setText("Cargando imagen...");
+        
+        SwingWorker<ImageIcon, Void> worker = 
+                new SwingWorker<>() {
+                    
+                    @Override 
+                    protected ImageIcon doInBackground() throws Exception {
+                        URL imageUrl = new URL(IMAGE_BASE_URL + path);
+                        ImageIcon originalIcon = new ImageIcon(imageUrl);
+                        
+                        Image scaledImage = originalIcon.getImage().getScaledInstance(320, 400, Image.SCALE_SMOOTH);
+                        return new ImageIcon(scaledImage);
+                    }
+                    
+                    @Override
+                    protected void done() {
+                        try{
+                            ImageIcon icon = get();
+                            
+                            lblPoster.setText("");
+                            lblPoster.setIcon(icon);
+                        } catch (Exception e) {
+                            lblPoster.setText("Error de imagen");
+                        }
+                    }
+                    
+                };
+                worker.execute();
+        
+    }
+    
     private void loadMovieData() {
 
         lblTitle.setText(movie.getTitle());

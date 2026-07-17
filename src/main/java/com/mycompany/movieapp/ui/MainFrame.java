@@ -8,6 +8,7 @@ package com.mycompany.movieapp.ui;
  *
  * @author abrahamescamillapinelo
  */
+import com.mycompany.movieapp.model.BackgroundTaskInterface;
 import com.mycompany.movieapp.model.Movie;
 import com.mycompany.movieapp.model.TvShow;
 import com.mycompany.movieapp.services.MovieService;
@@ -26,6 +27,8 @@ import org.json.JSONArray;
 import com.mycompany.movieapp.ui.MovieDetailsDialog;
 import com.mycompany.movieapp.model.LoadedContentType;
 import database.WatchlistStore;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class MainFrame extends JFrame {
 
@@ -35,17 +38,16 @@ public class MainFrame extends JFrame {
     private JTextField txtSearch;
     private JButton btnSearch;
 
-    
-
     private JTable tblMovies;
     private DefaultTableModel tableModel;
 
     private JButton btnViewDetails;
-    
-    
     private JButton deleteFromWatchlistButton;
     
     private JComboBox comboBox;
+    
+    private JLabel statusLabel;
+    private JProgressBar progressBar;
 
     // =========================
     // STATE
@@ -94,6 +96,12 @@ public class MainFrame extends JFrame {
         btnViewDetails = new JButton("View Details");
         
         deleteFromWatchlistButton = new JButton("Delete From Watchlist");
+        
+        statusLabel = new JLabel("Ready");
+        
+        progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setVisible(false);
 
         initComboBox();
         
@@ -141,6 +149,13 @@ public class MainFrame extends JFrame {
         topPanel.add(searchPanel);
         topPanel.add(Box.createVerticalStrut(10));
         topPanel.add(buttonsPanel);
+        
+        //Status Panel
+        JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        statusPanel.add(statusLabel);
+        statusPanel.add(progressBar);
+        
+        topPanel.add(statusPanel);
 
         // =========================================
         // CENTER PANEL
@@ -190,51 +205,51 @@ public class MainFrame extends JFrame {
     // =========================
     // ACTION METHODS
     // =========================
+    
+    private void setLoadingState(boolean isLoading, String message) {
+        statusLabel.setText(message);
+        progressBar.setVisible(isLoading);
+        
+        comboBox.setEnabled(!isLoading);
+        btnViewDetails.setEnabled(!isLoading);
+        deleteFromWatchlistButton.setEnabled(!isLoading);
+    }
+    
     /**
      * TODO: Call movie service and load top rated movies from API
      */
     private void loadTopRatedMovies() {
-        try {
-            movies = movieService.getTopRatedMovies();
-            contentType = LoadedContentType.TOP_MOVIES;
-            refreshTable();
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
-        }
-        
+        executeBackgroundTask(
+                movieService::getTopRatedMovies,
+                loadedMovies -> this.movies = loadedMovies,
+                LoadedContentType.TOP_MOVIES,
+                "Loading Top Movies...",
+                "Movies loaded"
+        );
     }
 
     /**
      * TODO: Call movie service and load top rated TV shows from API
      */
     private void loadTopRatedTVShows() {
-        try {
-            shows = movieService.getTopRatedTVShows();
-            contentType = LoadedContentType.TV_SHOWS;
-            refreshTable();
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(this, "Error al cargar shows");
-        }
+       executeBackgroundTask(
+               movieService::getTopRatedTVShows,
+               loadedShows -> this.shows = loadedShows,
+               LoadedContentType.TV_SHOWS,
+               "Loading TV Shows",
+               "Shows Loaded"
+       );
     }
 
     /**
      * TODO: Call movie service and load upcoming movies from API
      */
     private void loadUpcomingMovies() {
-        try {
-            movies = movieService.getUpcomingMovies();
-            contentType = LoadedContentType.INCOMING_MOVIES;
-            refreshTable();
-            
-
-        } catch (Exception e) {
-
-            JOptionPane.showMessageDialog(this, "Error al cargar peliculas");
-        }
+        executeBackgroundTask(movieService::getUpcomingMovies, 
+                loadedMovies -> this.movies = loadedMovies, 
+                LoadedContentType.INCOMING_MOVIES, 
+                "Loading Incoming movies", 
+                "Incoming movies loaded");
     }
     
     private void showWatchlistButtonAction() {
@@ -261,6 +276,43 @@ public class MainFrame extends JFrame {
                 showWatchlistButtonAction();
             }
         }
+    }
+    /*
+    Execute Background Method
+    */
+    
+    private <T> void executeBackgroundTask(
+            BackgroundTaskInterface<ArrayList<T>> backgroundTask,
+            Consumer<ArrayList<T>> onFinished,
+            LoadedContentType type,
+            String loadingMessage,
+            String successMessage
+    ){
+        setLoadingState(true, loadingMessage);
+        
+        SwingWorker<ArrayList<T>, Void> worker =
+                new SwingWorker<>() {
+                    @Override
+                    protected ArrayList<T> doInBackground() throws Exception {
+                        return backgroundTask.execute();
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            ArrayList<T> result = get();
+                            onFinished.accept(result);
+                            contentType = type;
+                            refreshTable();
+                            statusLabel.setText(successMessage);
+                            
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(MainFrame.this, e.getMessage());
+                        } finally {
+                            setLoadingState(false, statusLabel.getText());
+                        }
+                    }
+                };
+        worker.execute();
     }
 
     /**
@@ -301,10 +353,13 @@ public class MainFrame extends JFrame {
                     "Tienes que seleccionar pelicula");
             return;
         }
-
-        int idMovie = (int) tableModel.getValueAt(selectedRow, 0);
         
-        Movie selectedMovie = movieService.getMovieById(idMovie);
+        Movie selectedMovie = getSelectedMovieFromCurrentList(selectedRow);
+        
+        if(selectedMovie == null) {
+            JOptionPane.showMessageDialog(this, "La película no esta disponible");
+            return;
+        }
 
         MovieDetailsDialog details = new MovieDetailsDialog(this, selectedMovie, watchlistStore);
 
@@ -313,7 +368,27 @@ public class MainFrame extends JFrame {
         details.setVisible(true);
     }
     
+    private Movie getSelectedMovieFromCurrentList(int selectedRow) {
+        if(selectedRow < 0 || selectedRow >= movies.size()) {
+            return null;
+        }
+        if(contentType == LoadedContentType.TOP_MOVIES 
+                || contentType == LoadedContentType.INCOMING_MOVIES
+                || contentType == LoadedContentType.WATCHLIST) 
+        {
+            return movies.get(selectedRow);
+        }
+        
+        return null;
+    }
+    
     private void removeWatchlistButtonAction() {
+        
+        if(contentType != LoadedContentType.WATCHLIST){
+            JOptionPane.showMessageDialog(this, "Abre el Watchlist");
+            return;
+        }
+        
         int selectedRow = tblMovies.getSelectedRow();
         
         if(selectedRow == -1) {
@@ -321,15 +396,31 @@ public class MainFrame extends JFrame {
                     "Please select a movie.");
             return;
         }
-        int id = (int) tableModel.getValueAt(selectedRow, 0);
-        boolean wasRemoved = watchlistStore.removeFromWatchlist(id);
         
+        Movie selectedMovie = getSelectedMovieFromCurrentList(selectedRow);
+        
+        if(selectedMovie == null) {
+            JOptionPane.showMessageDialog(this, "Pelicula NO disponible");
+            return;
+        }
+        
+        int option = JOptionPane.showConfirmDialog(this, 
+                "Eliminar pelicula del Watchlist?", 
+                "Confirmar", 
+                JOptionPane.YES_NO_OPTION);
+        
+        if(option != JOptionPane.YES_OPTION){
+            return;
+        }
+        
+        boolean wasRemoved = watchlistStore.removeFromWatchlist(selectedMovie.getId());
         if(wasRemoved) {
-            JOptionPane.showMessageDialog(null, "Pelicula eliminada correctamente");
+            JOptionPane.showMessageDialog(this, "Pelicula eliminada correctamente");
             showWatchlistButtonAction();
         } else {
-            JOptionPane.showMessageDialog(null, "Error al eliminar pelicula del Watchlist");
+            JOptionPane.showMessageDialog(this, "Error al borrar pelicula");
         }
+        
         refreshTable();
     }
     

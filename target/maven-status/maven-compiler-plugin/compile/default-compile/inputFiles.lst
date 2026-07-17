@@ -1,4 +1,5 @@
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/MovieApp.java
+/Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/model/BackgroundTaskInterface.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/model/LoadedContentType.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/model/Movie.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/model/TvShow.java
@@ -7,4 +8,5 @@
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/ui/MovieDetailsDialog.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/com/mycompany/movieapp/utils/JsonParser.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/database/WatchlistStore.java
+/Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/network/EnumHttp.java
 /Users/abrahamescamillapinelo/NetBeansProjects/MovieApp/src/main/java/network/TMDBClient.java

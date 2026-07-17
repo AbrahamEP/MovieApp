@@ -39,4 +39,12 @@ public class TMDBClient {
 
         return response.toString();
     }
+    
+    public void sendPostRequest() {
+        
+    }
+    
+    public void sendPatchRequest() {
+        
+    }
 }

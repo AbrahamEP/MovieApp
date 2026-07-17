@@ -17,13 +17,15 @@ public class Movie {
     private String releaseDate;
     private String language;
     private String overview;
+    private String posterPath;
 
     public Movie(int id,
                  String title,
                  double rating,
                  String releaseDate,
                  String language,
-                 String overview) {
+                 String overview,
+                 String posterPath) {
 
         this.id = id;
         this.title = title;
@@ -31,6 +33,7 @@ public class Movie {
         this.releaseDate = releaseDate;
         this.language = language;
         this.overview = overview;
+        this.posterPath = posterPath;
     }
 
     /**
@@ -127,5 +130,19 @@ public class Movie {
     
     public void setText(String text, String text2) {
         
+    }
+
+    /**
+     * @return the posterPath
+     */
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    /**
+     * @param posterPath the posterPath to set
+     */
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 }
