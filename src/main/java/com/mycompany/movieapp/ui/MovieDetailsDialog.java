@@ -218,23 +218,23 @@ public class MovieDetailsDialog extends JDialog {
 
     private void addMovieToWatchlist() {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Save the selected Movie using repository.save(movie).
+         * Guarda la Movie seleccionada usando repository.save(movie).
          *
-         * Practice:
-         * - Calling a database-layer method from a Swing event
-         * - Checking whether the save operation succeeded
-         * - Displaying an appropriate dialog message
-         * - Thinking about duplicate movies already in the watchlist
+         * Practica:
+         * - Llamar a un método de la capa de base de datos desde un evento Swing
+         * - Verificar si la operación de guardado fue exitosa
+         * - Mostrar un mensaje de diálogo apropiado
+         * - Pensar en películas duplicadas que ya están en la watchlist
          *
-         * Why it matters:
-         * This method connects the user's button click to the INSERT operation
-         * students will implement in WatchlistRepository.
+         * Por qué importa:
+         * Este método conecta el clic del botón del usuario con la operación
+         * INSERT que los estudiantes implementarán en WatchlistRepository.
          */
         JOptionPane.showMessageDialog(
                 this,
-                "Student exercise: implement repository.save(movie) and handle the result."
+                "Ejercicio para estudiantes: implementa repository.save(movie) y maneja el resultado."
         );
 
         updateWatchlistButtonState();

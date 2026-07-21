@@ -1,91 +1,91 @@
 package database;
 
 /**
- * SQL statements used by WatchlistRepository.
+ * Sentencias SQL usadas por WatchlistRepository.
  *
- * The constants are intentionally empty in Phase 1. Students will fill them in
- * while learning how each CRUD operation talks to SQLite.
+ * Las constantes están intencionalmente vacías en la Fase 1. Los estudiantes
+ * las completarán mientras aprenden cómo cada operación CRUD se comunica con SQLite.
  */
 public final class SQLQueries {
 
     public static final String CREATE_TABLE = "";
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Write a CREATE TABLE IF NOT EXISTS statement for the watchlist.
+     * Escribe una sentencia CREATE TABLE IF NOT EXISTS para la watchlist.
      *
-     * Practice:
-     * - Choosing SQLite column types
-     * - Defining a primary key
-     * - Matching table columns to the Movie model
+     * Practica:
+     * - Elegir tipos de columna de SQLite
+     * - Definir una llave primaria
+     * - Relacionar las columnas de la tabla con el modelo Movie
      *
-     * Think about:
-     * - Why should the TMDB movie id be the primary key?
-     * - Which fields should allow null values?
+     * Piensa en:
+     * - ¿Por qué el id de película de TMDB debería ser la llave primaria?
+     * - ¿Qué campos deberían permitir valores null?
      */
 
     public static final String INSERT_MOVIE = "";
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Write an INSERT statement using placeholders (?).
+     * Escribe una sentencia INSERT usando placeholders (?).
      *
-     * Practice:
-     * - Column order
-     * - PreparedStatement parameters
-     * - Preventing SQL injection
+     * Practica:
+     * - Orden de columnas
+     * - Parámetros de PreparedStatement
+     * - Prevención de inyección SQL
      *
-     * Think about:
-     * - How many placeholders are needed?
-     * - How will WatchlistRepository bind each Movie property?
+     * Piensa en:
+     * - ¿Cuántos placeholders se necesitan?
+     * - ¿Cómo enlazará WatchlistRepository cada propiedad de Movie?
      */
 
     public static final String FIND_ALL = "";
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Write a SELECT statement that retrieves every movie in the watchlist.
+     * Escribe una sentencia SELECT que recupere todas las películas de la watchlist.
      *
-     * Practice:
-     * - SELECT column lists
-     * - Reading multiple rows with ResultSet
-     * - Choosing an ORDER BY clause when the UI needs predictable results
+     * Practica:
+     * - Listas de columnas en SELECT
+     * - Lectura de múltiples filas con ResultSet
+     * - Elección de una cláusula ORDER BY cuando la UI necesita resultados predecibles
      */
 
     public static final String FIND_BY_ID = "";
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Write a SELECT statement that retrieves one movie by id.
+     * Escribe una sentencia SELECT que recupere una película por id.
      *
-     * Practice:
-     * - WHERE clauses
-     * - PreparedStatement parameter binding
-     * - Handling the case where no row exists
+     * Practica:
+     * - Cláusulas WHERE
+     * - Enlace de parámetros con PreparedStatement
+     * - Manejo del caso donde no existe ninguna fila
      */
 
     public static final String EXISTS = "";
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Write a small SELECT query that answers whether a movie id exists.
+     * Escribe una consulta SELECT pequeña que responda si existe un id de película.
      *
-     * Practice:
-     * - Efficient lookup queries
+     * Practica:
+     * - Consultas de búsqueda eficientes
      * - ResultSet#next()
-     * - Returning boolean values from database checks
+     * - Devolver valores booleanos desde verificaciones de base de datos
      */
 
     public static final String DELETE_MOVIE = "";
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Write a DELETE statement for one movie id.
+     * Escribe una sentencia DELETE para un id de película.
      *
-     * Practice:
-     * - DELETE with a WHERE clause
-     * - Binding the selected movie id
-     * - Using executeUpdate() to confirm a row was removed
+     * Practica:
+     * - DELETE con una cláusula WHERE
+     * - Enlazar el id de la película seleccionada
+     * - Usar executeUpdate() para confirmar que una fila fue eliminada
      */
 
     private SQLQueries() {

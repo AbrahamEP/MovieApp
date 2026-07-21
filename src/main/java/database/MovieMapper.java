@@ -4,30 +4,31 @@ import com.mycompany.movieapp.model.Movie;
 import java.sql.ResultSet;
 
 /**
- * Converts database rows into Movie objects.
+ * Convierte filas de la base de datos en objetos Movie.
  *
- * This class exists so students can focus on one of the most important JDBC
- * skills: reading typed values from a ResultSet and building a domain object.
+ * Esta clase existe para que los estudiantes se enfoquen en una de las
+ * habilidades más importantes de JDBC: leer valores tipados desde un ResultSet
+ * y construir un objeto de dominio.
  */
 public class MovieMapper {
 
     public Movie fromResultSet(ResultSet resultSet) {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Read every column from the ResultSet and build a Movie object.
+         * Lee cada columna del ResultSet y construye un objeto Movie.
          *
-         * Practice:
-         * - getInt()
-         * - getString()
-         * - getDouble()
-         * - Matching SQL columns to Movie fields
-         * - Understanding object mapping
+         * Practica:
+         * - getOptInt()
+         * - getOptString()
+         * - getOptDouble()
+         * - Relacionar columnas SQL con campos de Movie
+         * - Entender el mapeo de objetos
          *
-         * Think about:
-         * - Which database column maps to Movie#getId()?
-         * - Which ResultSet getter matches SQLite INTEGER, REAL, and TEXT values?
-         * - Why should mapper code use the same column names as SQLQueries?
+         * Piensa en:
+         * - ¿Qué columna de la base de datos se mapea con Movie#getId()?
+         * - ¿Qué getter de ResultSet corresponde a valores SQLite INTEGER, REAL y TEXT?
+         * - ¿Por qué el código del mapper debe usar los mismos nombres de columnas que SQLQueries?
          */
         return null;
     }

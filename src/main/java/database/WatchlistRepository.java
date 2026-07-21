@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Database operations for the movie watchlist.
+ * Operaciones de base de datos para la watchlist de películas.
  *
- * This is a small educational repository, not a full enterprise architecture.
- * It keeps database code out of Swing while still letting students see the
- * complete JDBC flow in one approachable class.
+ * Este es un repositorio educativo pequeño, no una arquitectura empresarial
+ * completa. Mantiene el código de base de datos fuera de Swing y, al mismo
+ * tiempo, permite que los estudiantes vean el flujo JDBC completo en una clase
+ * fácil de entender.
  */
 public class WatchlistRepository {
 
@@ -23,113 +24,113 @@ public class WatchlistRepository {
 
     public void createTableIfNeeded() {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Create the watchlist table using SQLQueries.CREATE_TABLE.
+         * Crea la tabla watchlist usando SQLQueries.CREATE_TABLE.
          *
-         * Practice:
-         * - Getting a Connection from DatabaseManager
-         * - Creating a PreparedStatement
-         * - Executing schema SQL with executeUpdate()
-         * - Closing JDBC resources with try-with-resources
+         * Practica:
+         * - Obtener una Connection desde DatabaseManager
+         * - Crear un PreparedStatement
+         * - Ejecutar SQL de esquema con executeUpdate()
+         * - Cerrar recursos JDBC con try-with-resources
          *
-         * Why it matters:
-         * The rest of the application depends on the table existing before
-         * students try to save or load movies.
+         * Por qué importa:
+         * El resto de la aplicación depende de que la tabla exista antes de que
+         * los estudiantes intenten guardar o cargar películas.
          */
     }
 
     public boolean save(Movie movie) {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Write the save operation for one Movie using SQLQueries.INSERT_MOVIE.
+         * Escribe la operación para guardar una Movie usando SQLQueries.INSERT_MOVIE.
          *
-         * Practice:
+         * Practica:
          * - PreparedStatement
-         * - Parameter binding
+         * - Enlace de parámetros
          * - executeUpdate()
-         * - Returning true when one row was inserted
+         * - Devolver true cuando una fila fue insertada
          *
-         * Think about:
-         * - Which Movie getter matches each SQL placeholder?
-         * - How should duplicate movie ids be handled?
-         * - Why should this method reject a null movie before opening a connection?
+         * Piensa en:
+         * - ¿Qué getter de Movie corresponde a cada placeholder SQL?
+         * - ¿Cómo deberían manejarse ids de películas duplicados?
+         * - ¿Por qué este método debería rechazar una movie null antes de abrir una conexión?
          */
         return false;
     }
 
     public List<Movie> findAll() {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Retrieve every Movie stored in SQLite using SQLQueries.FIND_ALL.
+         * Recupera todas las Movie guardadas en SQLite usando SQLQueries.FIND_ALL.
          *
-         * Practice:
-         * - Executing a SELECT query
-         * - Iterating through a ResultSet
+         * Practica:
+         * - Ejecutar una consulta SELECT
+         * - Iterar sobre un ResultSet
          * - Calling mapper.fromResultSet(resultSet)
-         * - Returning a List<Movie>
+         * - Devolver una List<Movie>
          *
-         * Why it matters:
-         * This method powers the Watchlist option in the Swing combo box.
+         * Por qué importa:
+         * Este método alimenta la opción Watchlist del combo box de Swing.
          */
         return Collections.emptyList();
     }
 
     public Movie findById(int id) {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Retrieve one Movie by id using SQLQueries.FIND_BY_ID.
+         * Recupera una Movie por id usando SQLQueries.FIND_BY_ID.
          *
-         * Practice:
-         * - Binding one id parameter
-         * - Checking ResultSet#next()
-         * - Mapping exactly one row
-         * - Returning null when the movie is not found
+         * Practica:
+         * - Enlazar un parámetro id
+         * - Verificar ResultSet#next()
+         * - Mapear exactamente una fila
+         * - Devolver null cuando la película no se encuentra
          *
-         * Discussion point:
-         * Later modules can compare null with Optional, but keep this phase
-         * focused on JDBC fundamentals first.
+         * Punto de discusión:
+         * Módulos posteriores pueden comparar null con Optional, pero mantén
+         * esta fase enfocada primero en los fundamentos de JDBC.
          */
         return null;
     }
 
     public boolean exists(int id) {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Check whether a movie is already saved using SQLQueries.EXISTS.
+         * Verifica si una película ya está guardada usando SQLQueries.EXISTS.
          *
-         * Practice:
-         * - SELECT queries for existence checks
+         * Practica:
+         * - Consultas SELECT para verificar existencia
          * - PreparedStatement#setInt()
          * - ResultSet#next()
-         * - Returning a boolean from database state
+         * - Devolver un boolean a partir del estado de la base de datos
          *
-         * Why it matters:
-         * The Movie Details dialog uses this result to decide whether the Add
-         * button should be enabled.
+         * Por qué importa:
+         * El diálogo de detalles de película usa este resultado para decidir si
+         * el botón Add debe estar habilitado.
          */
         return false;
     }
 
     public boolean delete(int id) {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Delete one Movie using SQLQueries.DELETE_MOVIE.
+         * Elimina una Movie usando SQLQueries.DELETE_MOVIE.
          *
-         * Practice:
-         * - DELETE statements
-         * - WHERE clauses
+         * Practica:
+         * - Sentencias DELETE
+         * - Cláusulas WHERE
          * - executeUpdate()
-         * - Returning true only when a row was deleted
+         * - Devolver true solamente cuando una fila fue eliminada
          *
-         * Debugging hint:
-         * If this returns false, inspect the selected JTable row and the Movie id
-         * passed into this method.
+         * Pista de depuración:
+         * Si esto devuelve false, inspecciona la fila seleccionada del JTable y
+         * el id de Movie enviado a este método.
          */
         return false;
     }

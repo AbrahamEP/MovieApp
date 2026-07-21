@@ -3,42 +3,42 @@ package database;
 import java.sql.Connection;
 
 /**
- * Creates JDBC connections for the SQLite database.
+ * Crea conexiones JDBC para la base de datos SQLite.
  *
- * Keep this class focused. It should not create tables, run queries, map
- * ResultSet rows, or know anything about Swing.
+ * Mantén esta clase enfocada. No debe crear tablas, ejecutar consultas,
+ * mapear filas de ResultSet ni saber nada sobre Swing.
  */
 public class DatabaseManager {
 
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Replace the empty string with the SQLite JDBC URL for this project.
+     * Reemplaza la cadena vacía con la URL JDBC de SQLite para este proyecto.
      *
-     * Practice:
-     * - SQLite connection URL format
-     * - Understanding where the database file is stored
-     * - Keeping connection settings in one place
+     * Practica:
+     * - Formato de URL de conexión SQLite
+     * - Entender dónde se guarda el archivo de base de datos
+     * - Mantener la configuración de conexión en un solo lugar
      *
-     * Hint:
-     * The original project stored its database in a file named movieapp.db.
+     * Pista:
+     * El proyecto original guardaba su base de datos en un archivo llamado movieapp.db.
      */
     private static final String DATABASE_URL = "";
 
     public Connection getConnection() {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Create and return a JDBC connection using DriverManager.
+         * Crea y devuelve una conexión JDBC usando DriverManager.
          *
-         * Practice:
-         * - Calling DriverManager.getConnection(DATABASE_URL)
-         * - Deciding where SQLException should be handled
-         * - Understanding why opening connections is centralized
+         * Practica:
+         * - Llamar a DriverManager.getConnection(DATABASE_URL)
+         * - Decidir dónde debe manejarse SQLException
+         * - Entender por qué la apertura de conexiones está centralizada
          *
-         * Think about:
-         * - Should this method catch SQLException or declare it?
-         * - What happens if DATABASE_URL is empty or malformed?
+         * Piensa en:
+         * - ¿Este método debería capturar SQLException o declararla?
+         * - ¿Qué ocurre si DATABASE_URL está vacía o tiene un formato incorrecto?
          */
         return null;
     }

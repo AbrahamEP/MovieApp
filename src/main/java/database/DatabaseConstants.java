@@ -1,11 +1,11 @@
 package database;
 
 /**
- * Shared names for the SQLite watchlist table.
+ * Nombres compartidos para la tabla watchlist de SQLite.
  *
- * The goal of this class is to make database code easier to read without
- * hiding SQL from students. They should still understand every table and column
- * name used by the SQL statements.
+ * El objetivo de esta clase es hacer que el código de base de datos sea más
+ * fácil de leer sin ocultar SQL a los estudiantes. Aun así, deben entender
+ * cada nombre de tabla y columna usado por las sentencias SQL.
  */
 public final class DatabaseConstants {
 
@@ -15,19 +15,19 @@ public final class DatabaseConstants {
     public static final String COLUMN_TITLE = "title";
 
     /*
-     * STUDENT EXERCISE
+     * EJERCICIO PARA ESTUDIANTES
      *
-     * Add the remaining column names used by the Movie table.
+     * Agrega los nombres de columnas restantes usados por la tabla de películas.
      *
-     * Practice:
-     * - Reading the Movie model
-     * - Deciding which Movie properties must be persisted
-     * - Keeping Java constants synchronized with SQL column names
+     * Practica:
+     * - Leer el modelo Movie
+     * - Decidir qué propiedades de Movie deben persistirse
+     * - Mantener las constantes de Java sincronizadas con los nombres de columnas SQL
      *
-     * Think about:
-     * - Which column stores the rating?
-     * - Which column stores the release date?
-     * - Which columns are needed to show the details dialog after loading from SQLite?
+     * Piensa en:
+     * - ¿Qué columna guarda la calificación?
+     * - ¿Qué columna guarda la fecha de estreno?
+     * - ¿Qué columnas se necesitan para mostrar el diálogo de detalles después de cargar desde SQLite?
      */
 
     private DatabaseConstants() {

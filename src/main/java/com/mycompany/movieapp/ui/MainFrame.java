@@ -257,23 +257,23 @@ public class MainFrame extends JFrame {
     
     private void loadWatchlist() {
         /*
-         * STUDENT EXERCISE
+         * EJERCICIO PARA ESTUDIANTES
          *
-         * Retrieve every Movie stored in SQLite by calling repository.findAll().
+         * Recupera todas las Movie guardadas en SQLite llamando a repository.findAll().
          *
-         * Practice:
-         * - Connecting a Swing action to the database layer
-         * - Converting the returned List<Movie> into the table data shown by the UI
-         * - Refreshing the JTable after local database state changes
+         * Practica:
+         * - Conectar una acción de Swing con la capa de base de datos
+         * - Convertir la List<Movie> devuelta en los datos que muestra la tabla
+         * - Refrescar el JTable después de cambios en la base de datos local
          *
-         * After retrieving the list:
-         * - Store it in the movies field
-         * - Set contentType to WATCHLIST
-         * - Refresh the JTable
+         * Después de recuperar la lista:
+         * - Guárdala en el campo movies
+         * - Asigna WATCHLIST a contentType
+         * - Refresca el JTable
          *
-         * Why it matters:
-         * This method is the bridge between the repository and the visible
-         * watchlist screen students can test manually.
+         * Por qué importa:
+         * Este método es el puente entre el repositorio y la pantalla visible de
+         * watchlist que los estudiantes pueden probar manualmente.
          */
         movies = new ArrayList<>();
         contentType = LoadedContentType.WATCHLIST;
