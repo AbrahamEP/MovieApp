@@ -40,6 +40,23 @@ public final class SQLQueries {
      * - ¿Cómo enlazará WatchlistRepository cada propiedad de Movie?
      */
 
+    public static final String UPDATE_MOVIE = "";
+    /*
+     * EJERCICIO PARA ESTUDIANTES
+     *
+     * Escribe una sentencia UPDATE para refrescar los datos locales de una
+     * pelicula que ya existe.
+     *
+     * Practica:
+     * - UPDATE con placeholders
+     * - Clausula WHERE por id
+     * - Decidir que columnas deben cambiar durante sincronizacion
+     *
+     * Piensa en:
+     * - El id identifica la pelicula; normalmente no deberia actualizarse.
+     * - Algunos datos remotos, como rating u overview, pueden cambiar con el tiempo.
+     */
+
     public static final String FIND_ALL = "";
     /*
      * EJERCICIO PARA ESTUDIANTES

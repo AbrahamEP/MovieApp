@@ -30,6 +30,9 @@ import database.DatabaseManager;
 import database.WatchlistRepository;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import sync.RemoteMovieSource;
+import sync.SyncResult;
+import sync.SyncService;
 
 public class MainFrame extends JFrame {
 
@@ -44,6 +47,7 @@ public class MainFrame extends JFrame {
 
     private JButton btnViewDetails;
     private JButton deleteFromWatchlistButton;
+    private JButton syncUpcomingButton;
     
     private JComboBox comboBox;
     
@@ -58,6 +62,7 @@ public class MainFrame extends JFrame {
     MovieService movieService;
     private LoadedContentType contentType;
     private WatchlistRepository repository;
+    private SyncService syncService;
 
     // =========================
     // CONSTRUCTOR
@@ -69,6 +74,7 @@ public class MainFrame extends JFrame {
         repository = new WatchlistRepository(databaseManager);
         repository.createTableIfNeeded();
         movieService = new MovieService();
+        syncService = new SyncService(new RemoteMovieSource(movieService), repository);
         
         initializeFrame();
         initializeComponents();
@@ -99,6 +105,7 @@ public class MainFrame extends JFrame {
         btnViewDetails = new JButton("View Details");
         
         deleteFromWatchlistButton = new JButton("Delete From Watchlist");
+        syncUpcomingButton = new JButton("Sync Upcoming");
         
         statusLabel = new JLabel("Ready");
         
@@ -147,6 +154,7 @@ public class MainFrame extends JFrame {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         buttonsPanel.add(comboBox);
+        buttonsPanel.add(syncUpcomingButton);
         buttonsPanel.add(deleteFromWatchlistButton);
 
         topPanel.add(searchPanel);
@@ -203,6 +211,8 @@ public class MainFrame extends JFrame {
         comboBox.addActionListener(e -> loadButtonAction());
         
         deleteFromWatchlistButton.addActionListener(e -> removeWatchlistButtonAction());
+
+        syncUpcomingButton.addActionListener(e -> synchronizeUpcomingMovies());
     }
 
     // =========================
@@ -216,6 +226,7 @@ public class MainFrame extends JFrame {
         comboBox.setEnabled(!isLoading);
         btnViewDetails.setEnabled(!isLoading);
         deleteFromWatchlistButton.setEnabled(!isLoading);
+        syncUpcomingButton.setEnabled(!isLoading);
     }
     
     /**
@@ -253,6 +264,50 @@ public class MainFrame extends JFrame {
                 LoadedContentType.INCOMING_MOVIES, 
                 "Loading Incoming movies", 
                 "Incoming movies loaded");
+    }
+
+    private void synchronizeUpcomingMovies() {
+        /*
+         * EJERCICIO
+         *
+         * Sincroniza la base de datos local con las peliculas proximas.
+         *
+         * Despues de sincronizar:
+         * - Actualiza la JTable.
+         * - Muestra el resultado utilizando SyncResult.
+         * - Piensa donde deberia ejecutarse esta operacion para evitar bloquear
+         *   la interfaz.
+         *
+         * Pistas:
+         * - Esta version usa SwingWorker para respetar la interfaz grafica.
+         * - Completa primero SyncService antes de esperar cambios reales en SQLite.
+         */
+        setLoadingState(true, "Synchronizing upcoming movies...");
+
+        SwingWorker<SyncResult, Void> worker = new SwingWorker<>() {
+            @Override
+            protected SyncResult doInBackground() {
+                return syncService.synchronizeUpcomingMovies();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    SyncResult result = get();
+                    statusLabel.setText(result.toDisplayMessage());
+                    JOptionPane.showMessageDialog(MainFrame.this, result.toDisplayMessage());
+                    if (result.isSuccess()) {
+                        loadWatchlist();
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(MainFrame.this, e.getMessage());
+                } finally {
+                    setLoadingState(false, statusLabel.getText());
+                }
+            }
+        };
+
+        worker.execute();
     }
     
     private void loadWatchlist() {

@@ -60,6 +60,24 @@ public class WatchlistRepository {
         return false;
     }
 
+    public boolean update(Movie movie) {
+        /*
+         * EJERCICIO PARA ESTUDIANTES
+         *
+         * Actualiza una Movie existente usando SQLQueries.UPDATE_MOVIE.
+         *
+         * Practica:
+         * - Escribir operaciones UPDATE con PreparedStatement
+         * - Enlazar primero los campos que cambian y al final el id del WHERE
+         * - Devolver true solamente cuando una fila fue actualizada
+         *
+         * Por que importa:
+         * La sincronizacion no solo inserta datos nuevos. Tambien debe detectar
+         * cuando la fuente remota tiene informacion mas reciente que SQLite.
+         */
+        return false;
+    }
+
     public List<Movie> findAll() {
         /*
          * EJERCICIO PARA ESTUDIANTES
